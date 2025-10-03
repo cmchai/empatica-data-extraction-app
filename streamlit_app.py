@@ -7,6 +7,7 @@ try:
     from src.extract_empatica_data import data_wrangling as dw
 except Exception: # pragma: no cover
     dw = None
+    st.error('an error occured when importing data wrangling module', icon="🚨")
 
 # create basic elements of the App
 st.title('Data Extraction from the Empatica wristband')
