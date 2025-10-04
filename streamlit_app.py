@@ -4,7 +4,7 @@ import streamlit as st
 
 # Try to import the existing functions (okay if not present yet)
 try:
-    from src.extract_empatica_data import data_wrangling as dw
+    from extract_empatica_data import data_wrangling as dw
 except Exception: # pragma: no cover
     dw = None
     st.error('an error occured when importing data wrangling module', icon="🚨")
