@@ -4,9 +4,8 @@ import streamlit as st
 
 # Try to import the existing functions (okay if not present yet)
 try:
-    from extract_empatica_data import data_wrangling as dw
+    from data_wrangling import extract_start_tstamp, reading_avro_files, serialize_data_dict, extract_signal_streamlit
 except Exception: # pragma: no cover
-    dw = None
     st.error('an error occured when importing data wrangling module', icon="🚨")
 
 # create basic elements of the App
@@ -35,7 +34,7 @@ uploaded = st.file_uploader(
 @st.cache_data(show_spinner=True)
 def reading_avro_cached(uploaded_files):
     # call the orginal function
-    return dw.reading_avro_files(uploaded_files)
+    return reading_avro_files(uploaded_files)
 
 # step 1.2: read all this avro files
 if uploaded:
@@ -54,7 +53,7 @@ measure = st.selectbox(
 )
 
 if st.button("Data Extraction", disabled=not uploaded):
-    data_dict = dw.extract_signal_streamlit(raw_datas, measure)
+    data_dict = extract_signal_streamlit(raw_datas, measure)
     if data_dict and (data_dict.get("samples") or data_dict.get("tstamps")):
         st.session_state["data_dict"] = data_dict
         st.session_state["extracted_measure"] = measure
@@ -107,7 +106,7 @@ else:
 # downloading data
 if st.button("Prepare file", disabled=not has_data):
     try:
-        blob, filename, mime = dw.serialize_data_dict(locals()["data_dict"], fmt, base_name=file_stem)
+        blob, filename, mime = serialize_data_dict(locals()["data_dict"], fmt, base_name=file_stem)
         st.success(f"File ready: {filename}")
         st.download_button("⬇️ Download", data=blob, file_name=filename, mime=mime)
     except Exception as e:
